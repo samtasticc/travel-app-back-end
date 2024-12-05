@@ -5,6 +5,9 @@ const app = express()
 const mongoose = require('mongoose')
 
 const travelRouter = require('./controllers/travels.js')
+
+const testJWTRouter = require('./controllers/test-jwt.js')
+
 mongoose.connect(process.env.MONGODB_URI)
 
 mongoose.connection.on('connected', () => {
@@ -14,11 +17,12 @@ mongoose.connection.on('connected', () => {
 app.use(express.json())
 
 // ROUTES go below this line
-
+app.use('/test-jwt', testJWTRouter)
 app.use('/travels', travelRouter)
+
 
 // ROUTES go above this line
 const PORT = process.env.PORT || 3000
 app.listen(PORT, () => {
-    console.log('port 3000 is travelling') // delete this on cleanup
+    console.log('port is travelling') // delete this on cleanup
 })

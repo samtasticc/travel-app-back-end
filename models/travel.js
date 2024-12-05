@@ -28,10 +28,6 @@ const travelSchema = mongoose.Schema({
         type: String,
         required: true,
     },
-    // territory:  {  // i want a way to represent states and territories.
-    //     type: String,
-    //     required: true,
-    // }, // make this a strech goal or take required off
     flights: {
         type: String,
         required: true,
@@ -45,7 +41,7 @@ const travelSchema = mongoose.Schema({
         required: true,
     },
     activity: [activitySchema],
-})
+}, {timestamps: true})
 
 const userSchema = mongoose.Schema({
     username: {
