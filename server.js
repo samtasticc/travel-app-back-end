@@ -18,6 +18,7 @@ app.use(express.json())
 app.use('/travels', travelRouter)
 
 // ROUTES go above this line
-app.listen(3000, () => {
+const PORT = process.env.PORT || 3000
+app.listen(PORT, () => {
     console.log('port 3000 is travelling') // delete this on cleanup
 })

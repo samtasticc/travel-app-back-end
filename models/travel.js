@@ -21,17 +21,17 @@ const travelSchema = mongoose.Schema({
         required: true,
     },
     date: {
-        type: Date,
+        type: String,
         required: true,
     },
     country: {
         type: String,
         required: true,
     },
-    territory:  {  // i want a way to represent states and territories.
-        type: String,
-        required: true,
-    },
+    // territory:  {  // i want a way to represent states and territories.
+    //     type: String,
+    //     required: true,
+    // }, // make this a strech goal or take required off
     flights: {
         type: String,
         required: true,
