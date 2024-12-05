@@ -4,6 +4,7 @@ const express = require('express')
 const app = express()
 const mongoose = require('mongoose')
 
+const travelRouter = require('./controllers/travels.js')
 mongoose.connect(process.env.MONGODB_URI)
 
 mongoose.connection.on('connected', () => {
@@ -14,7 +15,7 @@ app.use(express.json())
 
 // ROUTES go below this line
 
-
+app.use('/travels', travelRouter)
 
 // ROUTES go above this line
 app.listen(3000, () => {
