@@ -74,6 +74,20 @@ router.put('/:travelId', async (req, res) => {
     }    
 })
 
+// ACTIVITY ROUTES
+
+router.post('/:travelId/activity', async (req, res) => {
+    try {
+        const createdTravel = await TravelList.findById(req.params.travelId);
+        if (!createdTravel) return res.status(404).json({ message: 'Travel not found' }); // change 'travel' to 'activity'?
+        createdTravel.activity.push(req.body);
+        res.status(201).json(createdTravel);
+    } catch (error) {
+        res.status(400).json({ message: error.message });
+    }   
+})
+
+
 // ! use for the remaining routes
 // router.post('/', async (req, res) => {
 //     try {
@@ -82,9 +96,5 @@ router.put('/:travelId', async (req, res) => {
         
 //     }    
 // })
-
-
-// ACTIVITY ROUTES
-
 
 module.exports = router
