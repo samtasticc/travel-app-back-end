@@ -94,7 +94,7 @@ router.get('/:travelId/activity', async (req, res) => {
         if (!foundTravel) return res.status(404).json({ message: 'Travel not found' })
         res.status(200).json(foundTravel.activity)
     }catch(err){
-        res.status(500).json({error: err.message})
+        res.status(500).json({error: err.message}) // show route
     }    
 })
 
