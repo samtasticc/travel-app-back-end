@@ -2,7 +2,7 @@ const User = require('../models/travel.js')
 const express = require('express')
 const router = express.Router()
 
-// user section
+// user section - adding the users.js file may change the trajectory of this.
 router.post('/user', async (req, res) => {
     try{
         console.log(req.body)
@@ -13,7 +13,7 @@ router.post('/user', async (req, res) => {
     }
 })
 
-// travel section
+// travel section - adding the users.js file may change the trajectory of this.
 router.post('/travel/:userid', async (req, res) => {
     try{
         console.log(req.body)
@@ -31,7 +31,7 @@ router.post('/travel/:userid', async (req, res) => {
     }
 })
 
-// activity section
+// activity section - adding the users.js file may change the trajectory of this.
 router.post('/activity/:userid/:travelid', async (req, res) => {
     try{
         console.log(req.body)
