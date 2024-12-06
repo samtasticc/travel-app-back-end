@@ -25,6 +25,23 @@ router.get('/', async (req, res) => {
     }    
 })
 
+router.get('/:travelsId', async (req, res) => {
+    try {
+        const foundTravel = await TravelList.findById(req.params.travelsId)
+        if (!foundTravel) {
+            res.status(404)
+            throw new Error('Travel list not found')
+        }
+        res.status(200).json(foundTravel)
+    }catch(err){
+        if (res.statusCode === 404) {
+            res.json({error: err.message})
+        }else{
+            res.status(500).json({error: err.message})
+        }
+    }    
+})
+
 // ! use for the remaining routes
 // router.post('/', async (req, res) => {
 //     try {
