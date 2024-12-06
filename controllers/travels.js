@@ -42,6 +42,23 @@ router.get('/:travelsId', async (req, res) => {
     }    
 })
 
+router.delete('/:travelsId', async (req, res) => {
+    try {
+        const deletedTravel = await TravelList.findByIdAndDelete(req.params.travelsId)
+        if (!deletedTravel){
+            res.status(404)
+            throw new Error('Travel list not found.')
+        }
+        res.status(200).json(deletedTravel)
+    }catch(err){
+        if(res.statusCode === 404) {
+            res.json({error:err.message})
+        }else{
+            res.status(500).json({error: err.message})
+        }
+    }    
+})
+
 // ! use for the remaining routes
 // router.post('/', async (req, res) => {
 //     try {
