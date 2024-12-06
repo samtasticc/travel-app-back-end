@@ -78,13 +78,24 @@ router.put('/:travelId', async (req, res) => {
 
 router.post('/:travelId/activity', async (req, res) => {
     try {
-        const createdTravel = await TravelList.findById(req.params.travelId);
-        if (!createdTravel) return res.status(404).json({ message: 'Travel not found' }); // change 'travel' to 'activity'?
-        createdTravel.activity.push(req.body);
-        res.status(201).json(createdTravel);
+        const createdTravel = await TravelList.findById(req.params.travelId)
+        if (!createdTravel) return res.status(404).json({ message: 'Travel not found' })
+        createdTravel.activity.push(req.body)
+        await createdTravel.save()
+        res.status(201).json(createdTravel)
     } catch (error) {
-        res.status(400).json({ message: error.message });
+        res.status(400).json({ message: error.message })
     }   
+})
+
+router.get('/:travelId/activity', async (req, res) => {
+    try {
+        const foundTravel = await TravelList.findById(req.params.travelId)
+        if (!foundTravel) return res.status(404).json({ message: 'Travel not found' })
+        res.status(200).json(foundTravel.activity)
+    }catch(err){
+        res.status(500).json({error: err.message})
+    }    
 })
 
 
