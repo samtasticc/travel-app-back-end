@@ -2,16 +2,17 @@ const User = require('../models/travel.js')
 const express = require('express')
 const router = express.Router()
 
-// user section - adding the users.js file may change the trajectory of this.
-router.post('/user', async (req, res) => {
-    try{
-        console.log(req.body)
-        const createdUser = await User.create(req.body)
-        res.status(201).json(createdUser)
-    }catch(err){
-        res.status(500).json({error: err.message})
-    }
-})
+// user section - adding the users.js file may change the trajectory of this. 
+// ! --- commented out but keep for now, i may need it later
+// router.post('/user', async (req, res) => {
+//     try{
+//         console.log(req.body)
+//         const createdUser = await User.create(req.body)
+//         res.status(201).json(createdUser)
+//     }catch(err){
+//         res.status(500).json({error: err.message})
+//     }
+// })
 
 // travel section - adding the users.js file may change the trajectory of this.
 router.post('/travel/:userid', async (req, res) => {
