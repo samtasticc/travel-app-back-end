@@ -7,6 +7,8 @@ router.use(verifyToken)
 
 
 // TRAVELS ROUTES
+
+// CREATE ROUTE
 router.post('/', async (req, res) => {
     try {
         const createdTravel = await TravelList.create(req.body)
@@ -16,6 +18,7 @@ router.post('/', async (req, res) => {
     }
 })
 
+// INDEX ROUTE
 router.get('/', async (req, res) => {
     try {
         const foundTravel = await TravelList.find()
@@ -25,6 +28,7 @@ router.get('/', async (req, res) => {
     }    
 })
 
+// SHOW ROUTE
 router.get('/:travelId', async (req, res) => {
     try {
         const foundTravel = await TravelList.findById(req.params.travelId)
@@ -42,6 +46,7 @@ router.get('/:travelId', async (req, res) => {
     }    
 })
 
+// DELETE ROUTE
 router.delete('/:travelId', async (req, res) => {
     try {
         const deletedTravel = await TravelList.findByIdAndDelete(req.params.travelId)
@@ -59,6 +64,7 @@ router.delete('/:travelId', async (req, res) => {
     }    
 })
 
+// UPDATE ROUTE
 router.put('/:travelId', async (req, res) => {
     try {
         const updatedTravel = await TravelList.findByIdAndUpdate(req.params.travelId, req.body, {
@@ -76,6 +82,7 @@ router.put('/:travelId', async (req, res) => {
 
 // ACTIVITY ROUTES
 
+// CREATE ROUTE
 router.post('/:travelId/activity', async (req, res) => {
     try {
         const createdTravel = await TravelList.findById(req.params.travelId)
@@ -88,16 +95,31 @@ router.post('/:travelId/activity', async (req, res) => {
     }   
 })
 
+// INDEX ROUTE
+// is this even needed?
+// router.get('/', async (req, res) => {
+//     try {
+//         const foundTravel = await TravelList.find()
+//         res.status(200).json(foundTravel.activity)
+//     }catch(err){
+//         res.status(500).json({error: err.message}) 
+//     }    
+// })
+
+// SHOW ROUTE
 router.get('/:travelId/activity', async (req, res) => {
     try {
         const foundTravel = await TravelList.findById(req.params.travelId)
         if (!foundTravel) return res.status(404).json({ message: 'Travel not found' })
         res.status(200).json(foundTravel.activity)
     }catch(err){
-        res.status(500).json({error: err.message}) // show route
+        res.status(500).json({error: err.message}) 
     }    
 })
 
+// DELETE ROUTE
+
+// UPDATE ROUTE
 
 // ! use for the remaining routes
 // router.post('/', async (req, res) => {
