@@ -25,9 +25,9 @@ router.get('/', async (req, res) => {
     }    
 })
 
-router.get('/:travelsId', async (req, res) => {
+router.get('/:travelId', async (req, res) => {
     try {
-        const foundTravel = await TravelList.findById(req.params.travelsId)
+        const foundTravel = await TravelList.findById(req.params.travelId)
         if (!foundTravel) {
             res.status(404)
             throw new Error('Travel list not found')
@@ -42,9 +42,9 @@ router.get('/:travelsId', async (req, res) => {
     }    
 })
 
-router.delete('/:travelsId', async (req, res) => {
+router.delete('/:travelId', async (req, res) => {
     try {
-        const deletedTravel = await TravelList.findByIdAndDelete(req.params.travelsId)
+        const deletedTravel = await TravelList.findByIdAndDelete(req.params.travelId)
         if (!deletedTravel){
             res.status(404)
             throw new Error('Travel list not found.')
@@ -56,6 +56,21 @@ router.delete('/:travelsId', async (req, res) => {
         }else{
             res.status(500).json({error: err.message})
         }
+    }    
+})
+
+router.put('/:travelId', async (req, res) => {
+    try {
+        const updatedTravel = await TravelList.findByIdAndUpdate(req.params.travelId, req.body, {
+            new: true,
+        })
+        if (!updatedTravel){
+            res.status(404)
+            throw new Error('Travel list not found.')
+        }
+        res.status(200).json(updatedTravel)
+    }catch(err){
+        res.status(500).json({error: err.message})
     }    
 })
 
