@@ -96,7 +96,7 @@ router.post('/:travelId/activity', async (req, res) => {
 })
 
 // INDEX ROUTE
-// is this even needed?
+// is this even needed? might be able to find out when full app is deployed.
 // router.get('/', async (req, res) => {
 //     try {
 //         const foundTravel = await TravelList.find()
@@ -118,6 +118,27 @@ router.get('/:travelId/activity', async (req, res) => {
 })
 
 // DELETE ROUTE
+
+router.delete('/:travelId/activity/:activityId', async (req, res) => {
+    try {
+        const deleteTravelActivity = await TravelList.findByIdAndDelete(
+            {_id: req.params.travelId, "activity._id": req.params.activityId},
+            {$pull: {activity: {_id: activityId}}},
+            {new: true}
+        )
+        if (!deleteTravelActivity) {
+            res.status(404)
+            throw new Error('Travel activity not found')
+        }
+        res.status(200).json(deleteTravelActivity)
+    }catch(err){
+        if(res.statusCode === 404) {
+            res.json({error: err.message})
+        }else{
+            res.status(500).json({error: err.message}) 
+        }
+    }   
+})
 
 // UPDATE ROUTE
 
