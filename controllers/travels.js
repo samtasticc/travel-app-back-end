@@ -117,13 +117,13 @@ router.get('/:travelId/activity', async (req, res) => {
     }    
 })
 
-// DELETE ROUTE
+// DELETE ROUTE - asked for help
 
 router.delete('/:travelId/activity/:activityId', async (req, res) => {
     try {
-        const deleteTravelActivity = await TravelList.findByIdAndDelete(
+        const deleteTravelActivity = await TravelList.findByIdAndUpdate(
             {_id: req.params.travelId, "activity._id": req.params.activityId},
-            {$pull: {activity: {_id: activityId}}},
+            {$pull: {activity: {_id: req.params.activityId}}},
             {new: true}
         )
         if (!deleteTravelActivity) {
