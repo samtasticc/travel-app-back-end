@@ -117,7 +117,7 @@ router.get('/:travelId/activity', async (req, res) => {
     }    
 })
 
-// DELETE ROUTE - asked for help
+// DELETE ROUTE
 
 router.delete('/:travelId/activity/:activityId', async (req, res) => {
     try {
@@ -141,6 +141,28 @@ router.delete('/:travelId/activity/:activityId', async (req, res) => {
 })
 
 // UPDATE ROUTE
+
+router.put('/:travelId/activity/:activityId', async (req, res) => {
+    try {
+        const {activityUpdate} = req.body
+        const updateTravelActivity = await TravelList.findByIdAndUpdate(
+            {_id: req.params.travelId, "activity._id": req.params.activityId},
+            {$set: {"activity.$": activityUpdate}},
+            {new: true}
+        )
+        if (!updateTravelActivity) {
+            res.status(404)
+            throw new Error('Travel activity not found')
+        }
+        res.status(200).json(updateTravelActivity)
+    }catch(err){
+        if(res.statusCode === 404) {
+            res.json({error: err.message})
+        }else{
+            res.status(500).json({error: err.message}) 
+        }
+    }   
+})
 
 // ! use for the remaining routes
 // router.post('/', async (req, res) => {
