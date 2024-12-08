@@ -90,8 +90,8 @@ router.post('/:travelId/activity', async (req, res) => {
         createdTravel.activity.push(req.body)
         await createdTravel.save()
         res.status(201).json(createdTravel)
-    } catch (error) {
-        res.status(400).json({ message: error.message })
+    } catch (err) {
+        res.status(400).json({ message: err.message })
     }   
 })
 
@@ -163,14 +163,5 @@ router.put('/:travelId/activity/:activityId', async (req, res) => {
         }
     }   
 })
-
-// ! use for the remaining routes
-// router.post('/', async (req, res) => {
-//     try {
-
-//     }catch(err){
-        
-//     }    
-// })
 
 module.exports = router
