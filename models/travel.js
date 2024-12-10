@@ -13,7 +13,11 @@ const activitySchema = mongoose.Schema({
         type: String,
         required: true,
     },
-})
+    author: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'User'
+    }
+}, {timestamps: true})
 
 const travelSchema = mongoose.Schema({
     title: {
@@ -39,6 +43,10 @@ const travelSchema = mongoose.Schema({
     restaurants: {
         type: String,
         required: true,
+    },
+    author: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'User'
     },
     activity: [activitySchema],
 }, {timestamps: true})

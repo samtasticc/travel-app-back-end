@@ -3,6 +3,9 @@ const express = require('express')
 const router = express.Router()
 const verifyToken = require('../middleware/verify-token')
 
+// PUBLIC ROUTES
+
+// PROTECTED ROUTES
 router.use(verifyToken)
 
 
@@ -11,73 +14,72 @@ router.use(verifyToken)
 // CREATE ROUTE
 router.post('/', async (req, res) => {
     try {
-        const createdTravel = await TravelList.create(req.body)
-        res.status(201).json(createdTravel)
-    }catch(err){
-        res.status(500).json({error: err.message})
+        req.body.author = req.user._id
+        const travel = await TravelList.create(req.body)
+        travel._doc.author = req.user
+        res.status(201).json(travel)
+        // const createdTravel = await TravelList.create(req.body)
+        // res.status(201).json(createdTravel)
+    }catch(error){
+        res.status(500).json(error)
     }
 })
 
 // INDEX ROUTE
 router.get('/', async (req, res) => {
     try {
-        const foundTravel = await TravelList.find()
-        res.status(200).json(foundTravel)
-    }catch(err){
-        res.status(500).json({error: err.message})
+        const travels = await TravelList.find({})
+            .populate('author')
+            .sort({ createdAt: 'desc'})
+        // const foundTravel = await TravelList.find()
+        res.status(200).json(travels)
+    }catch(error){
+        res.status(500).json(error)
     }    
 })
 
 // SHOW ROUTE
 router.get('/:travelId', async (req, res) => {
     try {
-        const foundTravel = await TravelList.findById(req.params.travelId)
-        if (!foundTravel) {
-            res.status(404)
-            throw new Error('Travel list not found')
+        const travel = await TravelList.findById(req.params.travelId).populate('author')
+        res.status(200).json(travel)
+    }catch(error){
+            res.status(500).json(error)
         }
-        res.status(200).json(foundTravel)
-    }catch(err){
-        if (res.statusCode === 404) {
-            res.json({error: err.message})
-        }else{
-            res.status(500).json({error: err.message})
+})
+
+// UPDATE ROUTE
+router.put('/:travelId', async (req, res) => {
+    try {
+        const travel = await TravelList.findById(req.params.travelId)
+
+        if (!travel.author.equals(req.user._id)) {
+            return res.status(403).send("You're not allowed to do that.")
         }
+
+        const updatedTravel = await TravelList.findByIdAndUpdate(req.params.travelId, req.body, {new: true})
+
+        updatedTravel._doc.author = req.user
+        res.status(200).json(updatedTravel)
+    }catch(error){
+        res.status(500).json(error)
     }    
 })
 
 // DELETE ROUTE
 router.delete('/:travelId', async (req, res) => {
     try {
-        const deletedTravel = await TravelList.findByIdAndDelete(req.params.travelId)
-        if (!deletedTravel){
-            res.status(404)
-            throw new Error('Travel list not found.')
-        }
-        res.status(200).json(deletedTravel)
-    }catch(err){
-        if(res.statusCode === 404) {
-            res.json({error:err.message})
-        }else{
-            res.status(500).json({error: err.message})
-        }
-    }    
-})
+        const travel = await TravelList.findById(req.params.travelId)
 
-// UPDATE ROUTE
-router.put('/:travelId', async (req, res) => {
-    try {
-        const updatedTravel = await TravelList.findByIdAndUpdate(req.params.travelId, req.body, {
-            new: true,
-        })
-        if (!updatedTravel){
-            res.status(404)
-            throw new Error('Travel list not found.')
+        if (!travel.author.equals(req.user._id)) {
+            return res.status(403).send("You're not allowed to do that.")
         }
-        res.status(200).json(updatedTravel)
-    }catch(err){
-        res.status(500).json({error: err.message})
-    }    
+
+        const deletedTravel = await TravelList.findByIdAndUpdate(req.params.travelId)
+        res.status(200).json(deletedTravel)
+    }catch(error){
+            res.status(500).json(error)
+        }
 })
 
 // ACTIVITY ROUTES
@@ -85,13 +87,16 @@ router.put('/:travelId', async (req, res) => {
 // CREATE ROUTE
 router.post('/:travelId/activity', async (req, res) => {
     try {
-        const createdTravel = await TravelList.findById(req.params.travelId)
-        if (!createdTravel) return res.status(404).json({ message: 'Travel not found' })
-        createdTravel.activity.push(req.body)
-        await createdTravel.save()
-        res.status(201).json(createdTravel)
-    } catch (err) {
-        res.status(400).json({ message: err.message })
+        req.body.author = req.user._id
+        const travel = await TravelList.findById(req.params.travelId)
+        travel.activity.push(req.body)
+        await travel.save()
+        const newActivity = travel.activity[travel.activity.length - 1]
+
+        newActivity._doc.author = req.user
+        res.status(201).json(newActivity)
+    } catch (error) {
+        res.status(400).json(error)
     }   
 })
 
@@ -107,61 +112,43 @@ router.post('/:travelId/activity', async (req, res) => {
 // })
 
 // SHOW ROUTE
-router.get('/:travelId/activity', async (req, res) => {
-    try {
-        const foundTravel = await TravelList.findById(req.params.travelId)
-        if (!foundTravel) return res.status(404).json({ message: 'Travel not found' })
-        res.status(200).json(foundTravel.activity)
-    }catch(err){
-        res.status(500).json({error: err.message}) 
-    }    
-})
-
-// DELETE ROUTE
-
-router.delete('/:travelId/activity/:activityId', async (req, res) => {
-    try {
-        const deleteTravelActivity = await TravelList.findByIdAndUpdate(
-            {_id: req.params.travelId, "activity._id": req.params.activityId},
-            {$pull: {activity: {_id: req.params.activityId}}},
-            {new: true}
-        )
-        if (!deleteTravelActivity) {
-            res.status(404)
-            throw new Error('Travel activity not found')
-        }
-        res.status(200).json(deleteTravelActivity)
-    }catch(err){
-        if(res.statusCode === 404) {
-            res.json({error: err.message})
-        }else{
-            res.status(500).json({error: err.message}) 
-        }
-    }   
-})
+// router.get('/:travelId/activity', async (req, res) => {
+//     try {
+//         const foundTravel = await TravelList.findById(req.params.travelId)
+//         if (!foundTravel) return res.status(404).json({ message: 'Travel not found' })
+//         res.status(200).json(foundTravel.activity)
+//     }catch(err){
+//         res.status(500).json({error: err.message}) 
+//     }    
+// })
 
 // UPDATE ROUTE
 
 router.put('/:travelId/activity/:activityId', async (req, res) => {
     try {
-        const {activityUpdate} = req.body
-        const updateTravelActivity = await TravelList.findByIdAndUpdate(
-            {_id: req.params.travelId, "activity._id": req.params.activityId},
-            {$set: {"activity.$": activityUpdate}},
-            {new: true}
-        )
-        if (!updateTravelActivity) {
-            res.status(404)
-            throw new Error('Travel activity not found')
-        }
-        res.status(200).json(updateTravelActivity)
-    }catch(err){
-        if(res.statusCode === 404) {
-            res.json({error: err.message})
-        }else{
-            res.status(500).json({error: err.message}) 
-        }
+        const travel = await TravelList.findById(req.params.travelId)
+        const activity = travel.activity.id(req.params.activityId)
+        activity.text = req.body.text
+        await travel.save()
+        res.status(200).json({message: 'Ok'})
+    }catch(error){
+        res.status(500).json(error)
     }   
 })
+
+
+// DELETE ROUTE
+
+router.delete('/:travelId/activity/:activityId', async (req, res) => {
+    try {
+        const travel = await TravelList.findById(req.params.travelId)
+        travel.activity.remove({ _id: req.params.activityId})
+        await travel.save()
+        res.status(200).json({message: 'Ok'})
+    }catch(error){
+        res.status(500).json(error)
+    }   
+})
+
 
 module.exports = router
