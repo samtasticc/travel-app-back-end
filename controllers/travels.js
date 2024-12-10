@@ -28,7 +28,7 @@ router.get('/', async (req, res) => {
 
 router.get('/:travelId', async (req, res) => {
     try {
-        const travel = await TravelList.findById(req.params.travelId).populate('author')
+        const travel = await TravelList.findById(req.params.travelId).populate(['author', 'activity.author'])
         res.status(200).json(travel)
     }catch(error){
             res.status(500).json(error)
