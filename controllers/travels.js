@@ -2,7 +2,7 @@ const TravelList = require('../models/travel.js')
 const express = require('express')
 const router = express.Router()
 const verifyToken = require('../middleware/verify-token')
-const {decode} = require('jsonwebtoken')
+// const {decode} = require('jsonwebtoken')
 
 router.use(verifyToken)
 
@@ -19,8 +19,7 @@ router.post('/', async (req, res) => {
 
 router.get('/', async (req, res) => {
     try {
-        const travels = await TravelList.find({})
-            .populate('author')
+        const travels = await TravelList.find({}).populate('author', 'username')
         res.status(200).json(travels)
     }catch(error){
         res.status(500).json(error)
