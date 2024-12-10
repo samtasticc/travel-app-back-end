@@ -8,7 +8,7 @@ router.get('/:userId', verifyToken, async (req, res) => {
         if(req.user._id !== req.params.userId){
             return res.status(401).json({error: 'Unauthorized'})
         }
-        const user = await User.findById(req.params.userId)
+        const user = await User.findById(req.params._id)
         if(!user) {
             res.status(404)
             throw new Error('Profile not found.')
